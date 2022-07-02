@@ -1,0 +1,75 @@
+---
+name: "SML/NJ Bug Report Form"
+description: "Submit a bug report"
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is for reporting bugs in the **legacy** version of
+        (https::smlnj.org)[**Standard ML of New Jersey**]
+  - type: markdown
+    attributes:
+      value: |
+        Please provide information about your system
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of SML/NJ are you using?
+      options:
+        - 110.99
+        - 110.99.1
+        - 110.99.2
+        - 110.99.3 (Latest)
+    validations:
+      required: true
+  - type: checkbox
+    id: operating_system
+    attributes:
+      label: Operating System
+      description: What operating system(s) exhibit the bug.
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other Unix
+    validations:
+      required: true
+  - type: text
+    id: os_version
+    attributes:
+      label: Operating System version
+      description: What OS version?
+  - type: checkbox
+    id: architecture
+    attributes:
+      label: Architecture
+      description: What processor(s) exhibit the bug.
+      options:
+        - Arm (using Rosetta)
+        - PowerPC
+        - Sparc
+        - x86 (32-bit)
+        - x86-64 (64-bit)
+  - type: markdown
+    attributes:
+      value: |
+        Information about the problem.
+  - type: dropdown
+    attributes:
+      label: Component
+      description: What component of the system
+      options:
+        - Installation
+        - Core system
+        - Compilation manager (CM)
+        - Basis Library
+        - SML/NJ Library
+        - Command-line tool (e.g., ml-antlr, ml-yacc, etc.)
+    validations:
+      required: true
+
