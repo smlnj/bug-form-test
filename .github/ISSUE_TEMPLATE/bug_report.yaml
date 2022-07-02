@@ -48,11 +48,11 @@ body:
       label: Architecture
       description: What processor(s) exhibit the bug.
       options:
-        - Arm (using Rosetta)
-        - PowerPC
-        - Sparc
-        - x86 (32-bit)
-        - x86-64 (64-bit)
+        - label: "Arm (using Rosetta)"
+        - label: "PowerPC"
+        - label: "Sparc"
+        - label: "x86 (32-bit)"
+        - label: "x86-64 (64-bit)"
   - type: markdown
     attributes:
       value: |
@@ -62,11 +62,11 @@ body:
       label: Component
       description: What component of the system
       options:
-        - Installation
-        - Core system
-        - Compilation manager (CM)
-        - Basis Library
-        - SML/NJ Library
-        - Command-line tool (e.g., ml-antlr, ml-yacc, etc.)
+        - label: Installation
+        - label: Core system
+        - label: Compilation manager (CM)
+        - label: Basis Library
+        - label: SML/NJ Library
+        - label: Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
     validations:
       required: true
