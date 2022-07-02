@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: >
-        ## Instructions
+        # Instructions
 
         Please use this form to report problems in the **legacy** version of
         [**Standard ML of New Jersey**](https://smlnj.org).
@@ -21,6 +21,8 @@ body:
   - type: markdown
     attributes:
       value: >
+        # System Information
+
         Please provide information about your system
   - type: dropdown
     id: version
@@ -68,7 +70,9 @@ body:
   - type: markdown
     attributes:
       value: >
-        Information about the problem.
+        # The Problem
+
+        Please provide information about the problem.
   - type: dropdown
     attributes:
       label: Component
@@ -119,11 +123,17 @@ body:
         code that exhibits the bug.
     validations:
       required: true
+  - type : markdown
+    attributes:
+      value: >
+        # Additional Information
   - type : textarea
     id: additional-info
     attributes:
       label: Additional Information
-      description:
+      description: >
+        Please provide any additional information that may help us diagnose and fix
+        the problem.
   - type: input
     id: email
     attributes:
