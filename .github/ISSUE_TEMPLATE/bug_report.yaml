@@ -6,10 +6,17 @@ body:
   - type: markdown
     attributes:
       value: |
-        This form is for reporting bugs in the **legacy** version of
+        \## Reporting a Bug
+        PLease use this form to report problems in the **legacy** version of
         [**Standard ML of New Jersey**](https://smlnj.org).
+
         To request a feature, please use the
-        [feature-request form](https://github.com/smlnj/bug-form-test/issues/new?template=feature_request].
+        [feature-request form](https://github.com/smlnj/bug-form-test/issues/new?template=feature_request).
+
+        Before creating a new bug report, please search the
+        [open issues](https://github.com/smlnj/bug-form-test/issues) to see if your
+        problem has already been reported (if so, please add your information to the existing
+        issue).
   - type: markdown
     attributes:
       value: |
@@ -96,3 +103,5 @@ body:
       description: |
         Please provide an email address to allow us to contact you
         if we require additional information.
+    validations:
+      required: true
