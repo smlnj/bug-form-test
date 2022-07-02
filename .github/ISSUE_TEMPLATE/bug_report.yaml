@@ -6,8 +6,9 @@ body:
   - type: markdown
     attributes:
       value: >
-        ## Reporting a Bug
-        PLease use this form to report problems in the **legacy** version of
+        ## Instructions
+
+        Please use this form to report problems in the **legacy** version of
         [**Standard ML of New Jersey**](https://smlnj.org).
 
         To request a feature, please use the
