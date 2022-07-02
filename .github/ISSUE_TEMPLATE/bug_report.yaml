@@ -18,10 +18,10 @@ body:
       label: Version
       description: What version of SML/NJ are you using?
       options:
-        - "110.99"
-        - "110.99.1"
-        - "110.99.2"
-        - "110.99.3 (Latest)"
+        - label: "110.99"
+        - label: "110.99.1"
+        - label: "110.99.2"
+        - label: "110.99.3 (Latest)"
     validations:
       required: true
   - type: checkboxes
@@ -30,10 +30,10 @@ body:
       label: What operating system(s) exhibit the bug?
       description: You may specify more than one.
       options:
-        - Linux
-        - macOS
-        - Windows
-        - "Other Unix"
+        - label: Linux
+        - label: macOS
+        - label: Windows
+        - label: "Other Unix"
     validations:
       required: true
   - type: input
