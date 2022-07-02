@@ -84,6 +84,7 @@ body:
         - Basis Library
         - SML/NJ Library
         - Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
+        - Documentation
     validations:
       required: true
   - type: dropdown
