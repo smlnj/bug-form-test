@@ -6,8 +6,6 @@ body:
   - type: markdown
     attributes:
       value: >
-        # Instructions
-
         Please use this form to request new features for the
         **legacy** version of [**Standard ML of New Jersey**](https://smlnj.org).
 
