@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: >
-        \## Reporting a Bug
+        ## Reporting a Bug
         PLease use this form to report problems in the **legacy** version of
         [**Standard ML of New Jersey**](https://smlnj.org).
 
