@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         This form is for reporting bugs in the **legacy** version of
-        (https::smlnj.org)[**Standard ML of New Jersey**]
+        [**Standard ML of New Jersey**](https://smlnj.org)
   - type: markdown
     attributes:
       value: |
@@ -18,10 +18,10 @@ body:
       label: Version
       description: What version of SML/NJ are you using?
       options:
-        - label: "110.99"
-        - label: "110.99.1"
-        - label: "110.99.2"
-        - label: "110.99.3 (Latest)"
+        - "110.99"
+        - "110.99.1"
+        - "110.99.2"
+        - "110.99.3 (Latest)"
     validations:
       required: true
   - type: checkboxes
@@ -62,11 +62,11 @@ body:
       label: Component
       description: What component of the system
       options:
-        - label: Installation
-        - label: Core system
-        - label: Compilation manager (CM)
-        - label: Basis Library
-        - label: SML/NJ Library
-        - label: Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
+        - Installation
+        - Core system
+        - Compilation manager (CM)
+        - Basis Library
+        - SML/NJ Library
+        - Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
     validations:
       required: true
