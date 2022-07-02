@@ -18,10 +18,10 @@ body:
       label: Version
       description: What version of SML/NJ are you using?
       options:
-        - 110.99
-        - 110.99.1
-        - 110.99.2
-        - 110.99.3 (Latest)
+        - "110.99"
+        - "110.99.1"
+        - "110.99.2"
+        - "110.99.3 (Latest)"
     validations:
       required: true
   - type: checkboxes
@@ -33,7 +33,7 @@ body:
         - Linux
         - macOS
         - Windows
-        - Other Unix
+        - "Other Unix"
     validations:
       required: true
   - type: input
