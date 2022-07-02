@@ -2,7 +2,6 @@ name: "SML/NJ Bug Report Form"
 description: "Submit a bug report"
 title: "[Bug]: <title>"
 labels: ["bug"]
-assignees: ''
 body:
   - type: markdown
     attributes:
@@ -25,11 +24,11 @@ body:
         - 110.99.3 (Latest)
     validations:
       required: true
-  - type: checkbox
+  - type: checkboxes
     id: operating_system
     attributes:
-      label: Operating System
-      description: What operating system(s) exhibit the bug.
+      label: What operating system(s) exhibit the bug?
+      description: You may specify more than one.
       options:
         - Linux
         - macOS
@@ -37,12 +36,13 @@ body:
         - Other Unix
     validations:
       required: true
-  - type: text
+  - type: input
     id: os_version
     attributes:
-      label: Operating System version
-      description: What OS version?
-  - type: checkbox
+      label: What OS version?
+      description: |
+        Additonal information about the OS; *e.g.*, "Windows 10" or "macOS Monterey."
+  - type: checkboxes
     id: architecture
     attributes:
       label: Architecture
