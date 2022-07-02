@@ -1,10 +1,8 @@
----
 name: "SML/NJ Bug Report Form"
 description: "Submit a bug report"
-title: "[Bug]: "
+title: "[Bug]: <title>"
 labels: ["bug"]
-assignees:
-  - octocat
+assignees: ''
 body:
   - type: markdown
     attributes:
@@ -72,4 +70,3 @@ body:
         - Command-line tool (e.g., ml-antlr, ml-yacc, etc.)
     validations:
       required: true
-
