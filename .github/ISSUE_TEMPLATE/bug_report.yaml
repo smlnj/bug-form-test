@@ -7,7 +7,9 @@ body:
     attributes:
       value: |
         This form is for reporting bugs in the **legacy** version of
-        [**Standard ML of New Jersey**](https://smlnj.org)
+        [**Standard ML of New Jersey**](https://smlnj.org).
+        To request a feature, please use the
+        [feature-request form](https://github.com/smlnj/bug-form-test/issues/new?template=feature_request].
   - type: markdown
     attributes:
       value: |
@@ -45,14 +47,16 @@ body:
   - type: checkboxes
     id: architecture
     attributes:
-      label: Architecture
-      description: What processor(s) exhibit the bug.
+      label: What processor exhibits the bug?
+      description: You may specify more than one.
       options:
         - label: "Arm (using Rosetta)"
         - label: "PowerPC"
         - label: "Sparc"
         - label: "x86 (32-bit)"
         - label: "x86-64 (64-bit)"
+    validations:
+      required: true
   - type: markdown
     attributes:
       value: |
@@ -60,7 +64,7 @@ body:
   - type: dropdown
     attributes:
       label: Component
-      description: What component of the system
+      description: Which component of the system is affected by the bug?
       options:
         - Installation
         - Core system
@@ -70,3 +74,25 @@ body:
         - Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
     validations:
       required: true
+  - type: dropdown
+    attributes:
+      label: Severity
+      options:
+        - Cosmetic
+        - Minor
+        - Major
+        - Critical
+    validations:
+      required: true
+  - type : textarea
+    id: description
+    attributes:
+      label: Description of the problem
+      description: Provide a short description of what the problem is.
+  - type: input
+    id: email
+    attributes:
+      label: Email address
+      description: |
+        Please provide an email address to allow us to contact you
+        if we require additional information.
