@@ -30,18 +30,23 @@ body:
       label: Version
       description: What version of SML/NJ are you using?
       options:
-        - "110.99"
-        - "110.99.1"
-        - "110.99.2"
         - "110.99.3 (Latest)"
+        - "110.99.2"
+        - "110.99.1"
+        - "110.99"
+        - "110.98.1"
+        - "110.98"
+        - "110.97"
+        - "Pre-110.97"
     validations:
       required: true
   - type: checkboxes
     id: operating_system
     attributes:
-      label: What operating system(s) exhibit the bug?
-      description: You may specify more than one.
+      label: Operating system
+      description: What operating system exhibits the bug?  (You may specify more than one.)
       options:
+        - label: Any
         - label: Linux
         - label: macOS
         - label: Windows
@@ -52,14 +57,15 @@ body:
     id: os_version
     attributes:
       label: What OS version?
-      description: |
+      description: >
         Additonal information about the OS; *e.g.*, "Windows 10" or "macOS Monterey."
   - type: checkboxes
     id: architecture
     attributes:
-      label: What processor exhibits the bug?
-      description: You may specify more than one.
+      label: Processor
+      description: What processor exhibits the bug? (You may specify more than one.)
       options:
+        - label: "Any"
         - label: "Arm (using Rosetta)"
         - label: "PowerPC"
         - label: "Sparc"
@@ -75,8 +81,8 @@ body:
         Please provide information about the problem.
   - type: dropdown
     attributes:
-      label: Component
-      description: Which component of the system is affected by the bug?
+      label: System Component
+      description: Which component of the SML/NJ system is affected by the bug?
       options:
         - Installation
         - Core system
@@ -85,11 +91,13 @@ body:
         - SML/NJ Library
         - Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
         - Documentation
+        - Other
     validations:
       required: true
   - type: dropdown
     attributes:
       label: Severity
+      description: How severe is the bug?
       options:
         - Cosmetic
         - Minor
@@ -100,7 +108,7 @@ body:
   - type : textarea
     id: description
     attributes:
-      label: Description of the problem
+      label: Description
       description: Provide a short description of what the problem is.
     validations:
       required: true
@@ -113,6 +121,7 @@ body:
     id: expected-behavior
     attributes:
       label: Expected Behavior
+      description: Explain how you think things should work.
   - type : textarea
     id: reproduce
     attributes:
@@ -120,8 +129,8 @@ body:
       description: >
         Explain how to reproduce the problem.  Include sample code (the smaller, the
         better) that exhibits the problem, when ppropriate.  If reproducing the bug
-        requires a large system, then please provide a download link for getting the
-        code that exhibits the bug.
+        requires a large system, you can drag a text/zip/gzip file here or provide a
+        download link for getting the code that exhibits the bug.
     validations:
       required: true
   - type : markdown
