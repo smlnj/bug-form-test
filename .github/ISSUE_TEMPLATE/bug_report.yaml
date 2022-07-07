@@ -1,6 +1,6 @@
 name: "SML/NJ Bug Report Form"
 description: "Submit a bug report"
-title: "[Bug]: <title>"
+title: "Summary description of bug"
 labels: ["bug"]
 body:
   - type: markdown
@@ -43,7 +43,7 @@ body:
   - type: checkboxes
     id: operating_system
     attributes:
-      label: Operating system
+      label: Operating System
       description: What operating system exhibits the bug?  (You may specify more than one.)
       options:
         - label: Any
@@ -56,7 +56,7 @@ body:
   - type: input
     id: os_version
     attributes:
-      label: What OS version?
+      label: OS Version
       description: >
         Additonal information about the OS; *e.g.*, "Windows 10" or "macOS Monterey."
   - type: checkboxes
