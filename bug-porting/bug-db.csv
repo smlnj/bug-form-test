@@ -3233,7 +3233,7 @@ val x = Nat ~3;  (* now we can create a negative natural *)
 
 destNat x;  (* val it = ~3 : int *)
 "," *** 2016-09-12 12:15 --- David MacQueen --- Fix committed for 110.81 (revision 4297).  Added a new boolean field ""stripped"" in the DATATYPE constructor for ticking.  This is true when a datatype has been matched to a simple type spec in signature matching, otherwise (default) false.  Datatype replication causes an error when the right hand side is a stripped datatype."
-150,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2015-12-07 15:23","2016-08-18 15:11","2016-08-18 15:11","Add title to batch script","The title of scripts executed through sml.bat is ""CMD"" or the like - non informative, in the case where other CMD windows are open
+150,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2015-12-07 15:23","2016-08-18 15:11","2022-07-11 13:49","Add title to batch script","The title of scripts executed through sml.bat is ""CMD"" or the like - non informative, in the case where other CMD windows are open
 Fix:
 add
 
@@ -3242,7 +3242,7 @@ add
 as the second line in smlnj.bat
 
 Submitted via web form by Elazar <elazarg@gmail.com>
-",0,0,0,"None","Windows Vista","Installer","Fixed","Feature","Any Windows","<= 110.79","","","","run sml.bat"," *** 2016-08-18 15:11 --- John Reppy --- Confirmed fixed in 110.80 *** 2016-06-16 14:09 --- John Reppy --- I've patched the file as suggested; it will need to be tested before it is marked as closed."
+",0,0,0,"None","Windows Vista","Installer","Fixed","Cosmetic","Any Windows","<= 110.79","","","","run sml.bat"," *** 2016-08-18 15:11 --- John Reppy --- Confirmed fixed in 110.80 *** 2016-06-16 14:09 --- John Reppy --- I've patched the file as suggested; it will need to be tested before it is marked as closed."
 151,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2016-01-10 08:58","2016-08-17 06:46","2016-08-17 06:46","Error installing from source on Mac OS X","Error when trying to compile from source on Mac OS X 10.9.5 (Mavericks).
 Additional comments:
 I've managed to get around it by editing the runtime/objs/mk.x86-darwin
@@ -14109,17 +14109,6 @@ fun main () =
 
 val () = main ()
 "," *** 2022-05-10 10:39 --- John Reppy --- Stupid indexing bug in Word8Slice.map code.  Does not appear to affect any of the other vector-slice modules.  Fixed for 110.99.3 and 2022.1."
-307,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2022-05-13 19:32","2022-05-31 11:18","2022-05-31 11:18","SExpParser.parseFile should return empty list on empty file","When `SExpParser.parseFile` parses an empty file, it will fail with:
-
-uncaught exception Fail [Fail: error [empty:1.1]: parsing value, found '<eof>']
-
-This is somewhat unexpected. An empty file has no s-expressions, so
-`SExpParser.parseFile` should be returning an empty list instead. Returning an
-empty list also has the advantage of making it possible to distinguish between
-parsing errors and empty files.",0,0,0,"All","Generic Unix","SML/NJ Library","Accepted As Bug","Feature","","110.99.2","","","",""," *** 2022-05-31 11:18 --- John Reppy --- Fixed for 110.99.3 and 2022.1"
-308,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2022-05-13 19:38","2022-06-30 08:36","2022-06-30 08:36","Add function for converting HTML4.html to string","It seems that there is no function in the HTML4 library that has the signature
-HTML4.html -> string. Could such a function be added to the HTML4 library?
-If not, is there any way to convert a HTML4.html value into a string?",0,0,0,"None","Generic Unix","SML/NJ Library","Won't Fix","Feature","","110.99.2","","","",""," *** 2022-06-30 08:36 --- John Reppy --- It is straightforward to generate a string from the existing API.  Using a CharBuffer, the following code does so: ~  ~   fun toString html = let ~         val buf = CharBuffer.new 1024 ~         in ~           HTML4Print.prHTML { ~               putc = fn c => CharBuffer.add1 (buf, c), ~               puts = fn s => CharBuffer.addVec (buf, s) ~             } html; ~           CharBuffer.contents buf ~         end; ~  ~ I've added this code to the header comment for the HTML4Print module and will include it in the documentation (when we get to it)."
 309,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2022-05-17 01:03","2022-05-31 09:28","2022-05-31 09:28","SExp: parsing the output of the printer produces a different SExp","""SExpParser.parse"" from the SML/NJ library does not produce the same
 s-expression that was written using ""SExpPrinter.print"" when strings
 containing multibyte characters are involved. How to reproduce:

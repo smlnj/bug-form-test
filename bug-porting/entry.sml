@@ -339,7 +339,7 @@ structure Entry :> sig
 
     type t
 
-    val readFile : string -> t list
+    val make : string vector -> t
 
     val id : t -> int
     val summary : t -> string
@@ -358,6 +358,11 @@ structure Entry :> sig
     val transcript : t -> string list
     val source : t -> string list
     val comments : t -> Comment.t list
+
+  (* queries *)
+    val isOpen : t -> bool
+    val isClosed : t -> bool
+    val isDeleted : t -> bool
 
   end = struct
 
@@ -398,7 +403,7 @@ structure Entry :> sig
                                          *)
       }
 
-    fun process (row : string vector) = let
+    fun make (row : string vector) = let
           fun field i = Vector.sub (row, i)
           fun multiLine i = Util.lines (field i)
           (* convert a date field that has the format "YYYY-MM-DD hh:mm" *)
@@ -459,22 +464,6 @@ structure Entry :> sig
             comments = Comment.fromString (field 27)
           } : t end
 
-    fun readFile file = if OS.FileSys.access (file, [OS.FileSys.A_READ])
-          then let
-            val inS = TextIO.openIn file
-            fun cleanup () = TextIO.closeIn inS
-            fun lp acc = (case CSVReadVector.getRow inS
-                   of SOME row => lp (process row :: acc)
-                    | NONE => List.rev acc
-                  (* end case *))
-            in
-            (* consumer the header *)
-              ignore (TextIO.inputLine inS);
-              (lp []) handle ex => (cleanup(); raise ex)
-              before cleanup()
-            end
-          else raise Fail "file not found"
-
     fun id (x : t) = #bugNum x
     fun summary (x : t) = #summary x
     fun submitter (x : t) = {name = #submitter x, email = #email x}
@@ -493,4 +482,59 @@ structure Entry :> sig
     fun source (x : t) = #source x
     fun comments (x : t) = #comments x
 
+    fun isOpen (x : t) = (#status x = Status.Open)
+    fun isClosed (x : t) = (#status x = Status.Closed)
+    fun isDeleted (x : t) = (#status x = Status.Deleted)
+
   end;
+
+structure DB :> sig
+
+    type t
+
+    val readFile : string -> t
+
+    val toList : t -> Entry.t list
+    val filter : (Entry.t -> bool) -> t -> Entry.t list
+    val mapPartial : (Entry.t -> 'a option) -> t -> 'a list
+    val find : t * int -> Entry.t option
+
+  end = struct
+
+    structure IMap = IntRedBlackMap
+
+    type t = Entry.t IMap.map
+
+    fun readFile file = if OS.FileSys.access (file, [OS.FileSys.A_READ])
+          then let
+            val inS = TextIO.openIn file
+            fun cleanup () = TextIO.closeIn inS
+            fun lp acc = (case CSVReadVector.getRow inS
+                   of SOME row => let
+                        val entry = Entry.make row
+                        in
+                          lp (IMap.insert (acc, Entry.id entry, entry))
+                        end
+                    | NONE => acc
+                  (* end case *))
+            in
+            (* consumer the header *)
+              ignore (TextIO.inputLine inS);
+              (lp IMap.empty) handle ex => (cleanup(); raise ex)
+              before cleanup()
+            end
+          else raise Fail "file not found"
+
+    val toList = IMap.listItems
+
+    fun filter pred (db : t) = IMap.foldr
+          (fn (ent, ents) => if pred ent then ent::ents else ents)
+            [] db
+
+    fun mapPartial f (db : t) = IMap.foldr
+          (fn (ent, xs) => (case f ent of SOME x => x::xs | _ => xs))
+            [] db
+
+    val find = IMap.find
+
+  end

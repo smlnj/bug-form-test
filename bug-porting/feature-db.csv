@@ -1,0 +1,19 @@
+artifact_id,status_id,status_name,priority,submitter_id,submitter_name,assigned_to_id,assigned_to_name,open_date,close_date,last_modified_date,summary,details,_votes,_voters,_votage,"Product","Operating System","Component",comments
+82,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2011-10-24 12:36","2015-09-25 08:34","2015-09-25 08:34","Implementations of PACK_REAL missing","There are no implementations of the PACK_REAL signatures in SML/NJ.
+Fix:
+I wrote a somewhat hacky implementation that might be of use: https://github.com/msullivan/sml-util/blob/master/libs/pack-real.sml
+
+Submitted via web form by Michael Sullivan
+",0,0,0,"None","None","None"," *** 2015-09-25 08:34 --- John Reppy --- Added for 110.79. *** 2015-09-23 17:59 --- John Reppy --- Moved from Bugs to Feature Requests *** 2015-09-23 17:59 --- John Reppy --- Reclassified as feature request. *** 2011-10-28 12:29 --- John Reppy --- Note that the implementation of PackReal is an optional part of the Basis Library, which is why this ticket is a ""feature request."""
+102,2,"Closed",3,142,"Bug Submitter",106,"David MacQueen","2012-06-17 12:52","2020-06-17 08:46","2020-06-17 08:46","Add 64-bit support","Since 64-bit architectures are now extremely common, it would be awfully nice if SML/NJ could run without 32-bit libraries and produce 64-bit code.",0,0,0,"None","None","None"," *** 2020-06-17 08:46 --- John Reppy --- Added in 110.94 *** 2019-10-04 15:55 --- David MacQueen --- Moved from Bugs to Feature Requests *** 2019-10-04 15:55 --- David MacQueen --- See 110.9x for 4 <= x <= 9 or 2020.1. *** 2012-06-17 18:11 --- David MacQueen --- We've beed discussing the needed support for 64bit for a while.  This may be the year when we make progress on this.  First problem is to find all the explicit or implicit dependencies on 32 bit architecture assumptions. ~ "
+307,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2022-05-13 19:32","2022-05-31 11:18","2022-07-11 13:52","SExpParser.parseFile should return empty list on empty file","When `SExpParser.parseFile` parses an empty file, it will fail with:
+
+uncaught exception Fail [Fail: error [empty:1.1]: parsing value, found '<eof>']
+
+This is somewhat unexpected. An empty file has no s-expressions, so
+`SExpParser.parseFile` should be returning an empty list instead. Returning an
+empty list also has the advantage of making it possible to distinguish between
+parsing errors and empty files.",0,0,0,"None","None","None"," *** 2022-07-11 13:52 --- John Reppy --- Moved from Bugs to Feature Requests *** 2022-07-11 13:52 --- John Reppy --- Moved to feature requests *** 2022-05-31 11:18 --- John Reppy --- Fixed for 110.99.3 and 2022.1"
+308,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2022-05-13 19:38","2022-06-30 08:36","2022-07-11 13:50","Add function for converting HTML4.html to string","It seems that there is no function in the HTML4 library that has the signature
+HTML4.html -> string. Could such a function be added to the HTML4 library?
+If not, is there any way to convert a HTML4.html value into a string?",0,0,0,"None","None","None"," *** 2022-07-11 13:50 --- John Reppy --- Moved from Bugs to Feature Requests *** 2022-07-11 13:50 --- John Reppy --- Moved to feature requests *** 2022-06-30 08:36 --- John Reppy --- It is straightforward to generate a string from the existing API.  Using a CharBuffer, the following code does so: ~  ~   fun toString html = let ~         val buf = CharBuffer.new 1024 ~         in ~           HTML4Print.prHTML { ~               putc = fn c => CharBuffer.add1 (buf, c), ~               puts = fn s => CharBuffer.addVec (buf, s) ~             } html; ~           CharBuffer.contents buf ~         end; ~  ~ I've added this code to the header comment for the HTML4Print module and will include it in the documentation (when we get to it)."

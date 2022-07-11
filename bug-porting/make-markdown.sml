@@ -1,18 +1,16 @@
-(* make-issues.sml
+(* make-markdown.sml
  *
  * COPYRIGHT (c) 2022 The Fellowship of SML/NJ (http://www.smlnj.org)
  * All rights reserved.
- *
- * This program converts the CSV bug data from the gforge server to
- * the GitHub issue format.
- *
- * usage:
- *      make-issues [ -dir <dir> ] <csv-file> <bug-no> ...
  *)
 
 (* generate a markdown file for an bug report *)
-structure Gen : sig
+structure MakeMarkdown : sig
 
+    (* generate a GitHub issue in Markdown format.   The first argument is the
+     * name of the output file and the second is the database entry for the
+     * bug.
+     *)
     val gen : string * Entry.t -> unit
 
   end = struct
