@@ -4,6 +4,16 @@
  * All rights reserved.
  *)
 
+structure CSVReadVector = CSVReadFn (
+  struct
+
+    type row = string vector
+
+    val fromList = Vector.fromList
+    val toList = Vector.toList
+
+  end)
+
 structure Status =
   struct
 
@@ -46,6 +56,22 @@ structure OperatingSystem =
 
 structure Architecture =
   struct
+
+    datatype t = None | All | Arm | PowerPC | Sparc | X86 | AMD64 | Other
+
+    fun fromString sts = (case Util.toLower a
+           of "none" => None
+            | "all" => All
+            | "dec alpha" => Other
+            | "hppa" => Other
+            | "ppc" => PowerPC
+            | "x86" => X86
+            | "mips" => Other
+            | "sparc" => Sparc
+            | "other" => Other
+            | _ => raise Fail(concat["bogus architecture \"", String.toString a, "\""])
+          (* end case *))
+
   end
 
 structure Component =
@@ -55,7 +81,7 @@ structure Component =
       = None | Installer | Compiler | Basis | CM | MLLex | MLYacc
       | MLBurg | SMLNJLib | CML | EXene | FFI | Other | MLULex | MLAntlr
 
-    fun fromString sts = (case Util.toLower sts
+    fun fromString c = (case Util.toLower c
            of "none" => None
             | "installer" => Installer
             | "compiler" => Compiler
@@ -71,7 +97,7 @@ structure Component =
             | "other" => Other
             | "ml-ulex" => MLULex
             | "ml-antlr" => MLAntlr
-            | _ => raise Fail(concat["bogus component \"", String.toString sts, "\""])
+            | _ => raise Fail(concat["bogus component \"", String.toString c, "\""])
           (* end case *))
 
   end;
@@ -157,21 +183,23 @@ structure Entry : sig
     type row = string vector
 
     type t = {
-        artifact_id : int,              (* 0: original bug number *)
+        bugNum : int,                   (* 0: original bug number *)
 (*
         status_id,                      (* 1: "Open" = 1, "Closed" = 2 *)
 *)
-        status_name : Status.t,         (* 2: "Open" or "Closed" *)
+        status : Status.t,              (* 2: "Open" or "Closed" *)
 (*
         priority : int,
         submitter_id,
-        submitter_name,                 (* 5: "Bug Submitter *)
+*)
+        submitter : string,             (* 5: "Bug Submitter *)
+(*
         assigned_to_id,
 *)
-        assigned_to_name : string,      (* 7: "John Reppy", ... *)
-        open_date : Date.date,          (* 8: YYY-MM-DD hh:mm" *)
-        close_date : Date.date,         (* 9: YYY-MM-DD hh:mm" *)
-        last_modified_date : Date.date, (* 10: YYY-MM-DD hh:mm" *)
+        assignedTo : string,            (* 7: "John Reppy", ... *)
+        openDate : Date.date,           (* 8: "YYYY-MM-DD hh:mm" *)
+        closeDate : Date.date,          (* 9: "YYYY-MM-DD hh:mm" *)
+        modifiedDate : Date.date,       (* 10: "YYYY-MM-DD hh:mm" *)
         summary : string,               (* 11: title of bug *)
         details : string list,          (* 12: *)
 (*
@@ -179,7 +207,7 @@ structure Entry : sig
         _voters,
         _votage,
 *)
-        architecture : string,          (* 16: "None", "All", "DEC Alpha", "HPPA",
+        architecture : Architecture.t,  (* 16: "None", "All", "DEC Alpha", "HPPA",
                                          *  "PPC", "x86", "MIPS", "SPARC", "Other"
                                          *)
         os : OperatingSystem.t,         (* 17: ... *)
@@ -210,11 +238,39 @@ structure Entry : sig
       }
 
     fun process (row : string vector) = let
+          fun field i = Vector.sub (row, i)
+          fun multiLine i = String.fields (fn #"\n" => true | _ => false) (field i)
+          (* convert a date field that has the format "YYYY-MM-DD hh:mm" *)
+          fun getDate i = ??
           in {
-            bugNum = valOf (Int.fromString (Vector.sub (row, 0))),
-            summary = Vector.sub(row, 11),
-            osVersion = Vector.sub(row, 21),     (* 21: *)
-            smlnjVersion = Vector.sub(row, 22)   (* 22: *)
+            bugNum = valOf (Int.fromString (field 0)),
+            (* ignore status_id [1] *)
+            status = Status.fromString (field 2),
+            (* ignore priority [3] *)
+            (* ignore submitter_id [4] *)
+            submitter = field 5,
+            (* ignore assigned_to_id [6] *)
+            assignedTo = field 7,
+            openDate = dateField 8,
+            closeDate = dateField  9,
+            modifiedDate = dateField 10,
+            summary = field 11,
+            details = multiLine 12,
+            (* ignore _votes [13] *)
+            (* ignore _voters [14] *)
+            (* ignore _votage [15] *)
+            architecture = Architecture.fromString (field 16),
+            os = OperatingSystem.fromString (field 17),
+            component = Component.fromString (field 18),
+            resolution = Resolution.fromString (field 19),
+            severity = Severity.fromString (field 20),
+            osVersion = field 21,       (* 21: *)
+            smlnjVersion = field 22,     (* 22: *)
+            (* ignore keywords [23] *)
+            (* ignore url [24] *)
+            transcript = multiLine 25,
+            source = multiLine 26,
+            comments = Comment.fromString (field 27)
           } end
 
     fun readFile file = if OS.FileSys.access (file, [OS.FileSys.A_READ])
