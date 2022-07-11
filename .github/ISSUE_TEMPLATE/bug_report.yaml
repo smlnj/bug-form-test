@@ -71,6 +71,7 @@ body:
         - label: "Sparc"
         - label: "x86 (32-bit)"
         - label: "x86-64 (64-bit)"
+        - label: "Other"
     validations:
       required: true
   - type: markdown
@@ -82,14 +83,20 @@ body:
   - type: dropdown
     attributes:
       label: System Component
-      description: Which component of the SML/NJ system is affected by the bug?
+      description: >
+        Which component of the SML/NJ system is affected by the bug?
+        Select "Command-line tool" for other programs, such **ml-antlr**,
+        **ml-yacc**, or **nlffi-gen**, that are included in the **SML/NJ**
+        distribution.
       options:
         - Installation
         - Core system
         - Compilation manager (CM)
         - Basis Library
         - SML/NJ Library
-        - Command-line tool (*e.g.*, ml-antlr, ml-yacc, *etc.*)
+        - Foreign-Function Interface (FFI)
+        - Command-line tool
+        - Concurrent ML (CML)
         - Documentation
         - Other
     validations:
