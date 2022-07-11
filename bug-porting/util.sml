@@ -15,7 +15,4 @@ structure Util =
 
     val lines = String.fields (fn #"\n" => true | _ => false)
 
-(*
-    fun reFind : RE.regexp -> substring -> (substring,
-*)
   end

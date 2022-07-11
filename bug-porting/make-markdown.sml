@@ -28,10 +28,51 @@ structure Gen : sig
    *
    *    <version>
    *
-   *    ### What operating system(s) exhibit the bug?
+   *    ### Operating System
    *
+   *    - [ ] Any
+   *    - [ ] Linux
+   *    - [ ] macOS
+   *    - [ ] Windows
+   *    - [ ] Other Unix
+   *
+   *    ### OS Version
+   *
+   *    <os-version>
+   *
+   *    ### Processor
+   *
+   *    ### System Component
+   *
+   *    ### Severity
+   *
+   *    ### Description
+   *
+   *    <text>
+   *
+   *    ### Transcript
+   *
+   *    ```
+   *    <transcript>
+   *    ```
+   *
+   *    ### Expected Behavior
+   *
+   *    <text>
+   *
+   *    ### Steps to Reproduce
+   *
+   *    <text>
+   *
+   *    ### Additional Information
+   *
+   *    <text>
+   *
+   *    ### Email address
    *    ================
    *)
+
+    val noResponse = "_No response_\n\n"
 
     fun gen (out, entry) = let
           val outS = TextIO.openOut out
@@ -40,34 +81,58 @@ structure Gen : sig
           fun prl l = pr(concat l)
           fun prHdr s = prl ["### ", s, "\n\n"]
           (* output a check list *)
-          fun prCheckList toS (checked, items) = let
+          fun prCheckList toS (hdr, checked, items) = let
                 fun prItem item = if checked item
                       then prl ["- [X] ", toS item, "\n"]
                       else prl ["- [ ] ", toS item, "\n"]
                 in
+                  prHdr hdr;
                   List.app prItem items
                 end
           (* output a code block *)
           fun prCodeBlock (title, lang, content) = (
                 prHdr title;
-                if lang <> "" then prl ["``` ", lang, "\n"] else pr "```\n";
-                List.app (fn ln => prl [ln, "\n"]) content;
-                pr "```\n\n")
+                if null content
+                  then pr noResponse
+                  else (
+                    if lang <> "" then prl ["``` ", lang, "\n"] else pr "```\n";
+                    List.app (fn ln => prl [ln, "\n"]) content;
+                    pr "```\n\n"))
+          (* print a possibly empty response *)
+          fun prResponse (hdr, response) = (
+                prHdr hdr;
+                if (response = "")
+                  then pr noResponse
+                  else prl [response, "\n\n"])
+          fun prTextBlock (title, content) = (
+                prHdr title;
+                if null content
+                  then pr noResponse
+                  else (
+                    List.app (fn ln => prl [ln, "\n"]) content;
+                    nl()))
+          (* print a dropdown response *)
+          fun prChoice toS (hdr, item) = (
+                prHdr hdr;
+                prl [toS item, "\n\n"])
+          (* operating-system info *)
+          val {os, version=osVersion} = E.os entry
+          fun isOS os' = (os = os')
           in
-            prl [E.summary entry, "\n"];
-            prHdr "Version";
-            prHdr "What operating system(s) exhibit the bug?";
-            prCheckList
-            prHdr "What OS version?";
-            prHdr "What processor exhibits the bug?";
-            prHdr "Component";
-            prHdr "Severity";
-            prHdr "Description of the problem";
-            prCodeBlock ("Transcript", "", (E.transcript entry));
-            prHdr "Expected Behavior";
-            prHdr "Steps to Reproduce";
-            prHdr "Additional Information";
-            prHdr "Email address";
+            prl [E.summary entry, "\n\n"];
+            prResponse ("Version", E.smlnjVersion entry);
+            prCheckList OperatingSystem.toString ("Operating System", isOS, OperatingSystem.values);
+            nl();
+            prResponse ("OS Version", osVersion);
+            prChoice Architecture.toString ("Processor", E.arch entry);
+            prChoice Component.toString ("Component", E.component entry);
+            prChoice Severity.toString ("Severity", E.severity entry);
+            prTextBlock ("Description of the problem", E.description entry);
+            prCodeBlock ("Transcript", "", E.transcript entry);
+            prTextBlock ("Expected Behavior", []);
+            prTextBlock ("Steps to Reproduce", E.source entry);
+            prTextBlock ("Additional Information", []);
+            prResponse ("Email address", #email(E.submitter entry));
             prHdr "Comments:";
             TextIO.closeOut outS
           end

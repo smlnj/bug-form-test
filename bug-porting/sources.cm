@@ -11,4 +11,3 @@ is
   csv-read-fn.sml
   entry.sml
   make-markdown.sml
-  util.sml
