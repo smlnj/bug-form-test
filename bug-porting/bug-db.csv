@@ -1059,9 +1059,9 @@ is
     $cml/cml.cm
     FFI/test.cm
     test.sml",""
-65,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2011-03-02 17:07","2022-06-27 10:19","2022-06-27 10:19","Garbage collection does not trigger sigGC","A signal handler set to run when sigGC is triggered does not appear to run when forcing GC.
+65,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2011-03-02 17:07","2022-06-27 10:19","2022-07-12 09:16","Garbage collection does not trigger sigGC","A signal handler set to run when sigGC is triggered does not appear to run when forcing GC.
 Submitted via web form by Ivan Tomac ivan.tomac@gmail.com
-",0,0,0,"x86","MacOS X","Compiler","Fixed","Minor","OS X 10.6.6","110.72","GC, Signals","","rlwrap sml
+",0,0,0,"x86","MacOS X","Other","Fixed","Minor","OS X 10.6.6","110.72","GC, Signals","","rlwrap sml
 Standard ML of New Jersey v110.72 [built: Wed Jan 26 00:56:21 2011]
 - open Signals;
 [autoloading]
@@ -1351,7 +1351,7 @@ stdIn:5.1-5.56 Error: operator and operand don	 agree [tycon mismatch]
 val it = fn : a ArraySlice.slice - int
 -
 "," *** 2011-07-19 17:15 --- John Reppy --- The issue is that Ian found an old version of the Basis specification that was before the addition of the Slice structures."
-76,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2011-08-04 01:03","2011-11-25 13:51","2011-11-25 13:51","blastWrite crashes","I encounter a crash of the SML/NJ environment, if I try to
+76,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2011-08-04 01:03","2011-11-25 13:51","2022-07-12 09:08","blastWrite crashes","I encounter a crash of the SML/NJ environment, if I try to
 call Unsafe.blastRead to read a byte stream marshalled by
 Unsafe.blastWrite.
 
@@ -1361,7 +1361,7 @@ Windows: A pop-up menu appears.
 Linux: I get the following messages:
 Fatal error -- bogus fault not in ML: sig = 11, code = 0x46cafc, pc = 0x46cafc)
 Submitted via web form by Masaya Saito saitohm@ism.ac.jp
-",0,0,0,"x86","Other","SML/NJ Library","None","Major","Windows 7","110.71","Unsafe operations","","","val y0 =  {a=1,b=2.0,c=(5.3,4.5)}: {a:int, b:real, c:real*real};
+",0,0,0,"x86","Other","Other","Fixed","Minor","Windows 7","110.71","Unsafe operations","","","val y0 =  {a=1,b=2.0,c=(5.3,4.5)}: {a:int, b:real, c:real*real};
 val z = Unsafe.blastWrite y0;
 val y = Unsafe.blastRead z: {a:int, b:real, c:real*real};"," *** 2011-11-25 13:51 --- John Reppy --- Fixed for 110.74. ~ [2011-11-25] *** 2011-11-25 12:29 --- John Reppy --- Committed a fix for the segmentation fault, but the underlying problem with blastWrite remains. ~ [2011-11-25]"
 77,2,"Closed",3,142,"Bug Submitter",106,"David MacQueen","2011-08-19 14:01","2012-01-16 23:02","2012-01-16 23:02","strange error message for syntax error","A syntax error results in a strange type error message.
@@ -2083,12 +2083,12 @@ is
   $/basis.cm
   main.sml
 ",""
-107,2,"Closed",5,142,"Bug Submitter",105,"Matthias Blume","2012-10-13 08:15","2012-10-20 13:41","2012-10-20 13:41","Bug of Int64 comparison","the Greater then operator on Int64 is completely wrong !
+107,2,"Closed",5,142,"Bug Submitter",105,"Matthias Blume","2012-10-13 08:15","2012-10-20 13:41","2022-07-12 09:12","Bug of Int64 comparison","the Greater then operator on Int64 is completely wrong !
 
 ~2  0 is true !!!! (the same for all comparison negative  positive)
 
 Submitted via web form by Christophe Raffalli raffalli@univ-savoie.fr
-",0,0,0,"Other","All","SML/NJ Library","Fixed","Critical","debian testing","110.74","Int64 comparison","","raffalli@delli7:~/Caml/caml-shift$ uname -a
+",0,0,0,"Other","All","Basis Library","Fixed","Critical","debian testing","110.74","Int64 comparison","","raffalli@delli7:~/Caml/caml-shift$ uname -a
 Linux delli7 3.2.0-3-amd64 #1 SMP Mon Jul 23 02:45:17 UTC 2012 x86_64 GNU/Linux
 raffalli@delli7:~/Caml/caml-shift$ sml
 Standard ML of New Jersey v110.74 [built: Sun Feb 19 03:57:22 2012]
@@ -2513,7 +2513,7 @@ sml: cannot find runtime system /usr/local/smlnj-110.76/bin/.run/run.x86-darwin
 Submitted via web form by Naassih Gopee naasish@cmu.edu
 ",0,0,0,"x86","MacOS X","Installer","Works For Me","Cosmetic","10.9","smlnj-110.76","","","","sml: cannot find runtime system /usr/local/smlnj-110.76/bin/.run/run.x86-darwin
 "," *** 2014-12-20 10:38 --- John Reppy --- We cannot reproduce this problem, so it probably was a fluke."
-122,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2013-12-01 10:35","2013-12-01 12:25","2013-12-01 12:25","Possible wrong foldl implementation","The foldl signature is:
+122,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2013-12-01 10:35","2013-12-01 12:25","2022-07-12 09:14","Possible wrong foldl implementation","The foldl signature is:
 (a *  - ) -  - a list - 
 
 instead of
@@ -2521,7 +2521,7 @@ instead of
 
 
 Submitted via web form by Leonardo Da Vinci leonadavinci@gmail.com
-",0,0,0,"x86","Linux","SML/NJ Library","Invalid","Major","Ubuntu 12.04 LTS","110.75","foldl","","Just execute the above code to the sml interpreter.","foldl (op -) 2 [1];
+",0,0,0,"x86","Linux","Basis Library","Invalid","Major","Ubuntu 12.04 LTS","110.75","foldl","","Just execute the above code to the sml interpreter.","foldl (op -) 2 [1];
 
 Gives minus one (~1) instead of one (1)."," *** 2013-12-01 12:25 --- John Reppy --- This is correct behavior.  According to the Basis Library specification ~  ~ foldl f init [x1, x2, ..., xn] ~ returns ~ f(xn,...,f(x2, f(x1, init))...) ~  ~ In this case, that would be (op -)(1, 2) ==> -1."
 123,2,"Closed",3,142,"Bug Submitter",106,"David MacQueen","2014-01-02 20:08","2017-09-18 14:33","2017-09-18 14:33","missing warning for non-exaustive binding at top level","No warning is generated for a non-exhaustive binding in a top-level function
@@ -13576,7 +13576,7 @@ val it = 2 : int
 ","exception A;
 exception B = A;
 (case B of A => 1 | B => 2 | _ => 3);"," *** 2022-06-17 14:23 --- David MacQueen --- The mkExp rule transposition problem still applies the the legacy branch, but with the new match compiler, the bug persisted.  The fix is to suppress the SWITCH contraction (FLINT/opt/lcontract.sml: swiInfo; FLINT/opt/fcontract.sml: fcSwitch) when the subject is an exception constructor, because these functions use equality of conreps to identify the exception constructor, which is not correct when one of the exceptions is defined by an exception identity declaration as in the bug test case.  The bug remains open in the legacy branch. *** 2021-11-09 21:06 --- David MacQueen --- A spurious ""rev"" operation in the SWITCHexp case of Translate.mkExp was removed, which restored the proper order of rules in the example (the A => rule ~ now comes first.  However, this was not enough to fix the bug.  Deeper analysis of the issues around identity exception declarations will be required."
-291,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2021-08-15 06:18","2022-06-27 10:44","2022-06-27 10:44","Signals are not delivered for corresponding events","No sigALRM nor sigGC will be delivered to installed handlers,
+291,2,"Closed",3,142,"Bug Submitter",103,"John Reppy","2021-08-15 06:18","2022-06-27 10:44","2022-07-12 09:16","Signals are not delivered for corresponding events","No sigALRM nor sigGC will be delivered to installed handlers,
 when an interval timer is set by ""setIntTimer"" or
 garbage collection is enforced by ""doGC"".
 
@@ -13588,7 +13588,7 @@ As for sigGC, it has been reported in #65.
 
 
 Submitted via web form by Masaya Saito <saitohm@sun.ac.jp>
-",0,0,0,"x86","Other","SML/NJ Library","Fixed","Major","Windows 10","110.85/110.98.1","structure Signals","","Standard ML of New Jersey v110.85 [built: Fri Dec 21 20:19:39 2018]
+",0,0,0,"x86","Other","Other","Fixed","Major","Windows 10","110.85/110.98.1","structure Signals","","Standard ML of New Jersey v110.85 [built: Fri Dec 21 20:19:39 2018]
 - open Signals
 = open SMLofNJ.IntervalTimer
 = open SMLofNJ.Internals.GC;
