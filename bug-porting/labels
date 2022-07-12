@@ -1,0 +1,72 @@
+# Standard GitHub labels
+
+bug
+documentation
+duplicate
+enhancement
+good first issue
+help wanted
+invalid
+question
+wontfix
+
+# Labels for libraries
+
+asdl-lib        problem with ASDL library
+basis-lib       problem with SML Basis library
+ckit-lib        problem with CKit library
+cml-lib         problem with CML library
+controls-lib    problem with Controls library
+exene           problem with eXene library
+hash-cons-lib   problem with HashCons library
+html3-lib       problem with HTML3 library
+html4-lib       problem with HTML4 library
+inet-lib        problem with INet library
+json-lib        problem with JSON library
+ml-lpt-lib      problem with ML-LPT library
+mlrisc-lib      problem with MLRisc library
+nlffi-lib       problem with NLFFI library
+pp-lib          problem with Pretty Printing library
+reactive-lib    problem with Reactive library
+regexp-lib      problem with Regular Expression library
+sexp-lib        problem with S-Expression library
+smlnj-lib       problem with SML/NJ Utility library
+unix-lib        problem with Unix library
+uuid-lib        problem with UUID library
+xml-lib         problem with XML library
+
+# Labels for command-line tools
+
+asdlgen         problem with asdlgen tool
+heap2exec       problem with heap2exec tool
+ml-antlr        problem with ml-antlr tool
+ml-build        problem with ml-build tool
+ml-burg         problem with ml-burg tool
+ml-lex          problem with ml-lex tool
+ml-makedepend   problem with ml-makedepend tool
+ml-ulex         problem with ml-ulex tool
+ml-yacc         problem with ml-yacc tool
+nlffigen        problem with nlffigen tool
+sml-repl        problem with SML/NJ REPL
+
+# Labels for other things
+
+installer       problem with installation
+cm              problem with compilation manager
+macos           problem on macOS systems
+windows         problem on Windows systems
+unsafe-struct   problem involves operations from Unsafe structure
+successor-ml    problem with Successor ML extensions
+smlofnj-struct  problem with SMLofNJ structure
+gc              problem with the garbage collection
+signals         problem with signals
+
+# Labels for specific kinds of compiler problems
+
+compiler-parser         problem with lexer or parser
+compiler-elab           problem with elaborator (type checking)
+compiler-match          problem with the match compiler
+compiler-flint          problem with FLINT phases
+compiler-cps            problem with CPS phases
+compiler-codegen        problem with code generator
+compiler-llvm           problem with LLVM code generator
