@@ -1,0 +1,8 @@
+## SML/NJ stuff ##
+.cm/
+
+# macOS finder
+.DS_Store
+
+# other stuff
+make-issues.amd64-darwin
