@@ -17,6 +17,26 @@ structure MakeMarkdown : sig
 
     structure E = Entry
 
+  (* mapping from gforge names to GitHub names *)
+    local
+      structure SMap = ListMapFn (
+        struct
+          type ord_key = string
+          val compare = String.compare
+        end)
+    in
+    val nameMap = let
+          val nMap = List.foldl SMap.insert' SMap.empty [
+                  ("John Reppy", "@JohnReppy"),
+                  ("David MacQueen", "@dmacqueen"),
+                  ("Matthias Blume", "@mathias-blume"),
+                  ("Matthew Fluet", "@MatthewFluet")
+                ]
+          in
+            fn name => (case SMap.find (nMap, name) of SOME n => n | NONE => name)
+          end
+    end
+
   (* the output has the following format:
    *
    *    ================
@@ -116,10 +136,22 @@ structure MakeMarkdown : sig
           (* operating-system info *)
           val {os, version=osVersion} = E.os entry
           fun isOS os' = (os = os')
+          (* print a comment *)
+          fun prComment {date, name, content} = let
+                val hdr = concat [
+                        "comment by ", nameMap name, " on ",
+                        Date.fmt "%Y-%M-%d %H:%M%S +000 UTC" date
+                      ]
+                in
+                  nl();
+                  prTextBlock (hdr, content)
+                end
           in
             prl [E.summary entry, "\n\n"];
             prResponse ("Version", E.smlnjVersion entry);
-            prCheckList OperatingSystem.toString ("Operating System", isOS, OperatingSystem.values);
+            prCheckList
+              OperatingSystem.toString
+                ("Operating System", isOS, OperatingSystem.values);
             nl();
             prResponse ("OS Version", osVersion);
             prChoice Architecture.toString ("Processor", E.arch entry);
@@ -131,7 +163,11 @@ structure MakeMarkdown : sig
             prTextBlock ("Steps to Reproduce", E.source entry);
             prTextBlock ("Additional Information", []);
             prResponse ("Email address", #email(E.submitter entry));
-            prHdr "Comments:";
+            if not (null (E.comments entry))
+              then (
+                pr "## Comments\n";
+                List.app prComment (E.comments entry))
+              else ();
             TextIO.closeOut outS
           end
 

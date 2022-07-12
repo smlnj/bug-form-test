@@ -3,7 +3,7 @@
  * COPYRIGHT (c) 2022 The Fellowship of SML/NJ (http://www.smlnj.org)
  * All rights reserved.
  *
- * The fields of the exported CSV file are:
+ * The fields of the bugs CSV file are:
  *
  *      artifact_id
  *      status_id
@@ -34,6 +34,29 @@
  *      "Source (for reproduction)"
  *      comments
  *
+ * The fields of a "feature" request is
+ *
+ *      artifact_id
+ *      status_id
+ *      status_name
+ *      priority
+ *      submitter_id
+ *      submitter_name
+ *      assigned_to_id
+ *      assigned_to_name
+ *      open_date
+ *      close_date
+ *      last_modified_date
+ *      summary
+ *      details
+ *      _votes
+ *      _voters
+ *      _votage
+ *      "Product"
+ *      "Operating System"
+ *      "Component"
+ *      comments
+ *
  * The last line of the `details` field may be have the form:
  *
  *      Submitted via web form by Jane Doe <jane.doe@email-server.com>
@@ -60,7 +83,8 @@ structure Util =
 
     val toLower = String.map Char.toLower
 
-    val lines = String.fields (fn #"\n" => true | _ => false)
+    fun lines "" = []
+      | lines txt = String.fields (fn #"\n" => true | _ => false) txt
 
   end
 
@@ -210,7 +234,7 @@ structure Resolution =
 
 structure Severity = struct
 
-    datatype t = None | Critical | Major | Minor | Cosmetic
+    datatype t = None | Critical | Major | Minor | Cosmetic | Feature
 
     fun fromString s = (case Util.toLower s
            of "none" => None
@@ -218,6 +242,7 @@ structure Severity = struct
             | "major" => Major
             | "minor" => Minor
             | "cosmetic" => Cosmetic
+            | "feature" => Feature
             | _ => raise Fail(concat["bogus severity \"", String.toString s, "\""])
           (* end case *))
 
@@ -226,6 +251,7 @@ structure Severity = struct
       | toString Major = "Major"
       | toString Minor = "Minor"
       | toString Cosmetic = "Cosmetic"
+      | toString Feature = raise Fail "unexpected 'Feature' for bug"
 
   end;
 
@@ -339,7 +365,8 @@ structure Entry :> sig
 
     type t
 
-    val make : string vector -> t
+    (* `make (isBug, fields)` creates a new entry (bug or feature) *)
+    val make : bool * string vector -> t
 
     val id : t -> int
     val summary : t -> string
@@ -351,6 +378,7 @@ structure Entry :> sig
     val os : t -> { os : OperatingSystem.t, version : string }
     val arch : t -> Architecture.t
     val smlnjVersion : t -> string
+    val keywords : t -> string
     val component : t -> Component.t
     val resolution : t -> Resolution.t
     val severity : t -> Severity.t
@@ -360,6 +388,7 @@ structure Entry :> sig
     val comments : t -> Comment.t list
 
   (* queries *)
+    val isBug : t -> bool
     val isOpen : t -> bool
     val isClosed : t -> bool
     val isDeleted : t -> bool
@@ -367,6 +396,7 @@ structure Entry :> sig
   end = struct
 
     type t = {
+        isBug : bool,                   (* true for bugs, false for feature requests *)
         bugNum : int,                   (* 0: original bug number *)
         status : Status.t,              (* 2: "Open" or "Closed" *)
         submitter : string,             (* 5: "Bug Submitter *)
@@ -396,6 +426,7 @@ structure Entry :> sig
                                          *  "Cosmetic", "Feature"
                                          *)
         smlnjVersion : string,          (* 22: *)
+        keywords : string,              (* 23: *)
         transcript : string list,       (* 25: *)
         source : string list,           (* 26: *)
         comments : Comment.t list       (* 27: each comment is proceeded text of the form
@@ -403,7 +434,28 @@ structure Entry :> sig
                                          *)
       }
 
-    fun make (row : string vector) = let
+    (* extract email addresses from text *)
+    local
+      structure SS = Substring
+      structure MT = MatchTree
+      val re = RE.compileString "[-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]+@[-a-zA-Z0-9.]+"
+      val find = RE.find re SS.getc
+    in
+    fun extractEmail txt = let
+          fun extract ss = (case find ss
+                 of NONE => []
+                  | SOME(MT.Match({pos, len}, _), rest) => let
+                      val email = SS.string(SS.slice(pos, 0, SOME len))
+                      in
+                        email :: extract rest
+                      end
+                (* end case *))
+          in
+            extract (SS.full txt)
+          end
+    end
+
+    fun make (isBug, row : string vector) = let
           fun field i = Vector.sub (row, i)
           fun multiLine i = Util.lines (field i)
           (* convert a date field that has the format "YYYY-MM-DD hh:mm" *)
@@ -421,8 +473,12 @@ structure Entry :> sig
                             then let
                               val s = String.extract (lastLn, 26, NONE)
                               in
-(* TODO: extract email address *)
-                                (s, "")
+                                case extractEmail s
+                                 of [] => (s, "")
+                                  | [e] => (s, e)
+(* QUESTION: what should we do for multiple addresses? *)
+                                  | addrs => (s, "")
+                                (* end case *)
                               end
                             else (submitter, "")
                         end
@@ -431,8 +487,11 @@ structure Entry :> sig
                   (submitter, email, details)
                 end
           (* get OS info *)
-          val {os, version=osVersion} = OperatingSystem.fromString (field 17, field 21)
+          val {os, version=osVersion} = if isBug
+                then OperatingSystem.fromString (field 17, field 21)
+                else OperatingSystem.fromString (field 17, "")
           in {
+            isBug = isBug,
             bugNum = valOf (Int.fromString (field 0)),
             (* ignore status_id [1] *)
             status = Status.fromString (field 2),
@@ -450,18 +509,26 @@ structure Entry :> sig
             (* ignore _votes [13] *)
             (* ignore _voters [14] *)
             (* ignore _votage [15] *)
-            architecture = Architecture.fromString (field 16),
+            architecture = if isBug
+              then Architecture.fromString (field 16)
+              else Architecture.None,
             os = os,
             osVersion = osVersion,
-            component = Component.fromString (field 18),
-            resolution = Resolution.fromString (field 19),
-            severity = Severity.fromString (field 20),
-            smlnjVersion = field 22,
-            (* ignore keywords [23] *)
+            component = if isBug
+              then Component.fromString (field 18)
+              else Component.None,
+            resolution = if isBug
+              then Resolution.fromString (field 19)
+              else Resolution.None,
+            severity = if isBug
+              then Severity.fromString (field 20)
+              else Severity.Feature,
+            smlnjVersion = if isBug then field 22 else "",
+            keywords = if isBug then field 23 else "",
             (* ignore url [24] *)
-            transcript = multiLine 25,
-            source = multiLine 26,
-            comments = Comment.fromString (field 27)
+            transcript = if isBug then multiLine 25 else [],
+            source = if isBug then multiLine 26 else [],
+            comments = Comment.fromString (field (if isBug then 27 else 19))
           } : t end
 
     fun id (x : t) = #bugNum x
@@ -474,6 +541,7 @@ structure Entry :> sig
     fun os (x : t) = {os = #os x, version = #osVersion x}
     fun arch (x : t) = #architecture x
     fun smlnjVersion (x : t) = #smlnjVersion x
+    fun keywords (x : t) = #keywords x
     fun component (x : t) = #component x
     fun resolution (x : t) = #resolution x
     fun severity (x : t) = #severity x
@@ -482,6 +550,7 @@ structure Entry :> sig
     fun source (x : t) = #source x
     fun comments (x : t) = #comments x
 
+    val isBug : t -> bool = #isBug
     fun isOpen (x : t) = (#status x = Status.Open)
     fun isClosed (x : t) = (#status x = Status.Closed)
     fun isDeleted (x : t) = (#status x = Status.Deleted)
@@ -492,7 +561,11 @@ structure DB :> sig
 
     type t
 
-    val readFile : string -> t
+    val empty : t
+
+    val readFile : bool * string * t -> t
+
+    val load : {bugs : string, features : string} -> t
 
     val toList : t -> Entry.t list
     val filter : (Entry.t -> bool) -> t -> Entry.t list
@@ -505,13 +578,16 @@ structure DB :> sig
 
     type t = Entry.t IMap.map
 
-    fun readFile file = if OS.FileSys.access (file, [OS.FileSys.A_READ])
+    val empty = IMap.empty
+
+    fun readFile (_, "", db) = db
+      | readFile (isBug, file, db) = if OS.FileSys.access (file, [OS.FileSys.A_READ])
           then let
             val inS = TextIO.openIn file
             fun cleanup () = TextIO.closeIn inS
             fun lp acc = (case CSVReadVector.getRow inS
                    of SOME row => let
-                        val entry = Entry.make row
+                        val entry = Entry.make (isBug, row)
                         in
                           lp (IMap.insert (acc, Entry.id entry, entry))
                         end
@@ -520,10 +596,12 @@ structure DB :> sig
             in
             (* consumer the header *)
               ignore (TextIO.inputLine inS);
-              (lp IMap.empty) handle ex => (cleanup(); raise ex)
+              (lp db) handle ex => (cleanup(); raise ex)
               before cleanup()
             end
           else raise Fail "file not found"
+
+    fun load {bugs, features} = readFile (true, bugs, readFile (false, features, empty))
 
     val toList = IMap.listItems
 

@@ -19,5 +19,7 @@ is
 
   csv-read-fn.sml
   entry.sml
+  labels.sml
   make-issues.sml
   make-markdown.sml
+

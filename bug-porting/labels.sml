@@ -16,21 +16,21 @@ structure Labels : sig
     structure C = Component
 
     fun get ent = let
-          val labels = []
+          val labels = ["gforge"]
           val labels = (case E.component ent
                  of Installer => "installer" :: labels
-                  | Compiler
+                  | Compiler => "compiler"
                   | Basis => "basis-lib" :: labels
                   | CM => "cm" :: labels
                   | MLLex => "ml-lex"
                   | MLYacc => "ml-yacc"
                   | MLBurg => "ml-burg"
-                  | SMLNJLib
-                  | CML
-                  | EXene
-                  | FFI
-                  | MLULex
-                  | MLAntlr
+                  | SMLNJLib => "smlnj-lib"
+                  | CML => "cml"
+                  | EXene => "exene"
+                  | FFI => "nlffigen"
+                  | MLULex => "ml-ulex"
+                  | MLAntlr => "ml-antlr"
                   | _ => labels
                 (* end case *))
           val labels = (case E.resolution ent

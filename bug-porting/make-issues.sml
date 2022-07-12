@@ -7,7 +7,7 @@
  * the GitHub issue format.
  *
  * usage:
- *      make-issues [ -dir <dir> ] <csv-file> <bug-no> ...
+ *      make-issues [ -dir <dir> ] [ -cmd ] <csv-file> <bug-no> ...
  *
  * to build:
  *      ml-build sources.cm MakeIssues.main make-issues
@@ -24,7 +24,7 @@ structure MakeIssues : sig
     fun prErr msg = TextIO.output (TextIO.stdErr, msg)
 
     fun usage () = (
-          prErr "** usage: make-issues [ -dir <dir> ] <csv-file> <bug-no> ...\n";
+          prErr "** usage: make-issues [ -dir <dir> ] [ -cmd ] <csv-file> <bug-no> ...\n";
           OS.Process.exit OS.Process.failure)
 
     fun main (cmd, args) = let
@@ -33,15 +33,17 @@ structure MakeIssues : sig
                   | file::(bugs as _::_) =>  (".", file, bugs)
                   | _ => usage()
                 (* end case *))
-          val db = DB.readFile csvFile
+(* TODO: load features too! *)
+          val db = DB.readFile (true, csvFile, DB.empty)
           fun find id = (case Int.fromString id
                  of SOME id => DB.find (db, id)
                   | NONE => NONE
                 (* end case *))
           fun gen id = (case find id
                  of (SOME ent) => let
+                      val prefix = if E.isBug ent then "bug-" else "feature-"
                       val issueName = concat[
-                              "bug-", StringCvt.padLeft #"0" 3 (Int.toString(E.id ent)), ".md"
+                              prefix, StringCvt.padLeft #"0" 3 (Int.toString(E.id ent)), ".md"
                             ]
                       val path = OS.Path.concat(outDir, issueName)
                       in

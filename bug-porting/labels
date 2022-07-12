@@ -30,7 +30,8 @@ pp-lib          problem with Pretty Printing library
 reactive-lib    problem with Reactive library
 regexp-lib      problem with Regular Expression library
 sexp-lib        problem with S-Expression library
-smlnj-lib       problem with SML/NJ Utility library
+smlnj-lib       problem with some SML/NJ library
+smlnj-util-lib  problem with SML/NJ Utility library
 unix-lib        problem with Unix library
 uuid-lib        problem with UUID library
 xml-lib         problem with XML library
@@ -51,18 +52,21 @@ sml-repl        problem with SML/NJ REPL
 
 # Labels for other things
 
-installer       problem with installation
 cm              problem with compilation manager
-macos           problem on macOS systems
-windows         problem on Windows systems
-unsafe-struct   problem involves operations from Unsafe structure
-successor-ml    problem with Successor ML extensions
-smlofnj-struct  problem with SMLofNJ structure
+floating-point  problem related to floating-point operations
 gc              problem with the garbage collection
+gforge          bug/feature request ported from smlnj-gforge repository
+installer       problem with installation
+macos           problem on macOS systems
 signals         problem with signals
+smlofnj-struct  problem with SMLofNJ structure
+successor-ml    problem with Successor ML extensions
+unsafe-struct   problem involves operations from Unsafe structure
+windows         problem on Windows systems
 
 # Labels for specific kinds of compiler problems
 
+compiler                problem with compiler
 compiler-parser         problem with lexer or parser
 compiler-elab           problem with elaborator (type checking)
 compiler-match          problem with the match compiler
