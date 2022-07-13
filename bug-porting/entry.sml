@@ -84,7 +84,12 @@ structure Util =
     val toLower = String.map Char.toLower
 
     fun lines "" = []
-      | lines txt = String.fields (fn #"\n" => true | _ => false) txt
+      | lines txt = let
+          val txt = Substring.dropl Char.isSpace (Substring.dropr Char.isSpace (Substring.full txt))
+          in
+            List.map Substring.string
+              (Substring.fields (fn #"\n" => true | _ => false) txt)
+          end
 
   end
 
