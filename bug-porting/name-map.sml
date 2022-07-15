@@ -11,6 +11,8 @@ structure NameMap : sig
     (* convert a name if possible *)
     val map : string -> string
 
+    val find : string -> string option
+
     (* rewrite a string by replacing known names with "@" mentions *)
     val rewrite : string -> string
 
@@ -25,35 +27,41 @@ structure NameMap : sig
 
     (* name/GitHub name pairs *)
     val tbl = [
-            ("Alley Stoughton", "@alleystoughton"),
-            ("Benjamin Quiring", "@bquiring"),
-            ("Christopher League", "@league"),
-            ("Dan Licata", "@dlicata335"),
-            ("DanGrossman", "@djg98115"),
-            ("David MacQueen", "@dmacqueen"),
-            ("Harrison Grodin", "@HarrisonGrodin"),
-            ("John Reppy", "@JohnReppy"),
-            ("Jon Riehl", "@jriehl"),
-            ("Karl Crary", "@kcrary"),
-            ("Kavon Farvardin", "@kavon"),
-            ("Konrad Slind", "@konrad-slind"),
-            ("Lars Bergstrom", "@larsbergstrom"),
-            ("Masaya Saito", "@mmsaito"),
-            ("matt rice", "@ratmice"),
-            ("Matthew Fluet", "@MatthewFluet"),
-            ("Matthias Blume", "@mathias-blume"),
-            ("Mike Rainey", "@mikerainey"),
-            ("Phil Clayton", "@pclayton"),
-            ("Simon Hollingshead", "@simonhollingshead"),
-            ("Skye Soss", "@Skyb0rg007"),
-            ("Vesa Norrman", "@vesanorrman")
+            ("Allen Leung", "leunga"),
+            ("Alley Stoughton", "alleystoughton"),
+            ("Benjamin Quiring", "bquiring"),
+            ("Christopher League", "league"),
+            ("Dan Licata", "dlicata335"),
+            ("DanGrossman", "djg98115"),
+            ("David MacQueen", "dmacqueen"),
+            ("Harrison Grodin", "HarrisonGrodin"),
+            ("John Reppy", "JohnReppy"),
+            ("Jon Riehl", "jriehl"),
+            ("Karl Crary", "kcrary"),
+            ("Kavon Farvardin", "kavon"),
+            ("Konrad Slind", "konrad-slind"),
+            ("Lars Bergstrom", "larsbergstrom"),
+            ("Masaya Saito", "mmsaito"),
+            ("matt rice", "ratmice"),
+            ("Matthew Fluet", "MatthewFluet"),
+            ("Matthias Blume", "mathias-blume"),
+            ("Mike Rainey", "mikerainey"),
+            ("Phil Clayton", "pclayton"),
+            ("Simon Hollingshead", "simonhollingshead"),
+            ("Skye Soss", "Skyb0rg007"),
+            ("Vesa Norrman", "vesanorrman"),
+            ("Zhong Shao", "zhong-shao")
           ]
 
-    val map = let
-          val nMap = List.foldl SMap.insert' SMap.empty tbl
-          in
-            fn name => (case SMap.find (nMap, name) of SOME n => n | NONE => name)
-          end
+    val nMap = List.foldl SMap.insert' SMap.empty  tbl
+
+    fun find "Nobody" = NONE
+      | find name = SMap.find (nMap, name)
+
+    fun map name = (case SMap.find (nMap, name)
+           of SOME n => "@" ^ n
+            | NONE => name
+          (* end case *))
 
   (* implement rewriting using RE.match *)
     local
@@ -70,8 +78,8 @@ structure NameMap : sig
                 else strs
           fun lp (start, i, strs) = (case matcher i
                  of SOME(s, j) => if (start < i)
-                      then lp (j, j, s :: consSlice(start, i, strs))
-                      else lp (j, j, s::strs)
+                      then lp (j, j, s :: "@" :: consSlice(start, i, strs))
+                      else lp (j, j, s :: "@" :: strs)
                   | NONE => if (i < len)
                       then lp (start, i+1, strs)
                       else consSlice(start, i, strs)

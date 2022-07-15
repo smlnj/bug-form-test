@@ -13,9 +13,9 @@ wontfix
 # Labels for libraries
 
 asdl-lib        problem with ASDL library
-basis-lib       problem with SML Basis library
+basis-lib       problem with Standard ML Basis library
 ckit-lib        problem with CKit library
-cml-lib         problem with CML library
+cml             problem with CML or CML library
 controls-lib    problem with Controls library
 exene           problem with eXene library
 hash-cons-lib   problem with HashCons library
@@ -50,19 +50,28 @@ ml-yacc         problem with ml-yacc tool
 nlffigen        problem with nlffigen tool
 sml-repl        problem with SML/NJ REPL
 
+# Labels for specific systems
+
+cygwin          problem specific to Cygwin on Windows
+linux           problem specific to Linux systems
+macos           problem specific to macOS systems
+windows         problem specific to Windows systems
+wsl             problem specific to Cygwin on Windows
+
 # Labels for other things
 
 cm              problem with compilation manager
+error-messages  problem with compiler error messages
 floating-point  problem related to floating-point operations
 gc              problem with the garbage collection
-gforge          bug/feature request ported from smlnj-gforge repository
-installer       problem with installation
-macos           problem on macOS systems
+gforge          bug (or feature request) ported from smlnj-gforge repository
+installation    problem with installation
+io              problem with input/output
 signals         problem with signals
 smlofnj-struct  problem with SMLofNJ structure
+sockets         problem with networking code
 successor-ml    problem with Successor ML extensions
 unsafe-struct   problem involves operations from Unsafe structure
-windows         problem on Windows systems
 
 # Labels for specific kinds of compiler problems
 
@@ -74,3 +83,4 @@ compiler-flint          problem with FLINT phases
 compiler-cps            problem with CPS phases
 compiler-codegen        problem with code generator
 compiler-llvm           problem with LLVM code generator
+compiler-mlrisc         problem with MLRISC code generator

@@ -376,6 +376,7 @@ structure Entry :> sig
     val id : t -> int
     val summary : t -> string
     val submitter : t -> { name : string, email : string }
+    val submitMsg : t -> string option
     val status : t -> Status.t
     val assignedTo : t -> string
     val openDate : t -> Date.date
@@ -406,6 +407,7 @@ structure Entry :> sig
         status : Status.t,              (* 2: "Open" or "Closed" *)
         submitter : string,             (* 5: "Bug Submitter *)
         email : string,                 (* submitter email extracted from details [12] *)
+        submitMsg : string option,      (* last line of details (if it is a submit message) *)
         assignedTo : string,            (* 7: "John Reppy", ... *)
         openDate : Date.date,           (* 8: "YYYY-MM-DD hh:mm" *)
         closeDate : Date.date option,   (* 9: "" or "YYYY-MM-DD hh:mm" *)
@@ -443,7 +445,7 @@ structure Entry :> sig
     local
       structure SS = Substring
       structure MT = MatchTree
-      val re = RE.compileString "[-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]+@[-a-zA-Z0-9.]+"
+      val re = RE.compileString "[-a-zA-Z0-9!#$%&'*+/=?^_`{|}~.]+@[-a-zA-Z0-9.]+"
       val find = RE.find re SS.getc
     in
     fun extractEmail txt = let
@@ -460,36 +462,39 @@ structure Entry :> sig
           end
     end
 
+    (* get submitter message from details *)
+    fun splitDetails [] = ([], NONE)
+      | splitDetails lns = let
+          fun split (prefix, [last]) = if String.isPrefix "Submitted via web form by " last
+                then (List.rev prefix, SOME last)
+                else (lns, NONE)
+            | split (prefix, ln::lns) = split (ln::prefix, lns)
+          in
+            split ([], lns)
+          end
+
     fun make (isBug, row : string vector) = let
           fun field i = Vector.sub (row, i)
           fun multiLine i = Util.lines (field i)
           (* convert a date field that has the format "YYYY-MM-DD hh:mm" *)
           fun dateField i = Timestamp.fromString (field i)
           (* get the submitter and details *)
-          val (submitter, email, details) = let
+          val (submitter, email, details, submitMsg) = let
                 val submitter = field 5
                 val details = multiLine 12
                 val submitter = if submitter = "Bug Submitter" then "" else submitter
-                val (submitter, email) = if not(null details)
-                      then let
-                        val lastLn = List.last details
-                        in
-                          if String.isPrefix "Submitted via web form by " lastLn
-                            then let
-                              val s = String.extract (lastLn, 26, NONE)
-                              in
-                                case extractEmail s
-                                 of [] => (s, "")
-                                  | [e] => (s, e)
-(* QUESTION: what should we do for multiple addresses? *)
-                                  | addrs => (s, "")
-                                (* end case *)
-                              end
-                            else (submitter, "")
-                        end
-                      else (submitter, "")
                 in
-                  (submitter, email, details)
+                  case splitDetails details
+                   of (details', NONE) => (submitter, "", details', NONE)
+                    | (details', SOME lastLn) => let
+                        val s = String.extract (lastLn, 26, NONE)
+                        in
+                          case extractEmail s
+                           of [] => (s, "", details', SOME lastLn)
+                            | addrs => (s, String.concatWith "," addrs, details', SOME lastLn)
+                          (* end case *)
+                        end
+                  (* end case *)
                 end
           (* get OS info *)
           val {os, version=osVersion} = if isBug
@@ -504,6 +509,7 @@ structure Entry :> sig
             (* ignore submitter_id [4] *)
             submitter = submitter,
             email = email,
+            submitMsg = submitMsg,
             (* ignore assigned_to_id [6] *)
             assignedTo = field 7,
             openDate = dateField 8,
@@ -539,6 +545,7 @@ structure Entry :> sig
     fun id (x : t) = #bugNum x
     fun summary (x : t) = #summary x
     fun submitter (x : t) = {name = #submitter x, email = #email x}
+    fun submitMsg (x : t) = #submitMsg x
     fun status (x : t) = #status x
     fun assignedTo (x : t) = #assignedTo x
     fun openDate (x : t) = #openDate x

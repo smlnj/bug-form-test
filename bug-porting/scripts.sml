@@ -30,5 +30,17 @@ fun prSubmitters db = List.app
                 (* end case *)))
           db);
 
+(* list bug owners *)
+fun prOwners db = List.app
+      (fn (n, who) => print(concat[
+              StringCvt.padRight #" " 4 (Int.toString n ^ ":"), " ", who, "\n"
+            ]))
+        (DB.mapPartial
+          (fn ent => (case Entry.assignedTo ent
+                 of "" => NONE
+                  | name => SOME(Entry.id ent, name)
+                (* end case *)))
+          db);
+
 (* get a bug by number *)
 fun get db id = valOf (DB.find (db, id));

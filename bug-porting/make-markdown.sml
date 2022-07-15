@@ -17,29 +17,9 @@ structure MakeMarkdown : sig
 
     structure E = Entry
 
-  (* mapping from gforge names to GitHub names *)
-    local
-      structure SMap = ListMapFn (
-        struct
-          type ord_key = string
-          val compare = String.compare
-        end)
-    in
-    val nameMap = let
-          val nMap = List.foldl SMap.insert' SMap.empty [
-                  ("John Reppy", "@JohnReppy"),
-                  ("David MacQueen", "@dmacqueen"),
-                  ("Matthias Blume", "@mathias-blume"),
-                  ("Matthew Fluet", "@MatthewFluet")
-                ]
-          in
-            fn name => (case SMap.find (nMap, name) of SOME n => n | NONE => name)
-          end
-    end
-
-  (* the output has the following format:
+  (* the output for a "bug" has the following format:
    *
-   *    ================
+   * ================
    *    <title line>
    *
    *    ### Version
@@ -87,7 +67,27 @@ structure MakeMarkdown : sig
    *    <text>
    *
    *    ### Email address
-   *    ================
+   *
+   *    <email address of submitter>
+   *
+   *    ## Comments
+   *
+   *    <comments>
+   *
+   * ================
+   *
+   * The format for a feature request is
+   *
+   *    <title line>
+   *
+   *    ### Description
+   *
+   *    <text>
+   *
+   *    ## Comments
+   *
+   *    <comments>
+   *
    *)
 
     val noResponse = "_No response_\n\n"
@@ -139,7 +139,7 @@ structure MakeMarkdown : sig
           (* print a comment *)
           fun prComment {date, name, content} = let
                 val hdr = concat [
-                        "comment by ", nameMap name, " on ",
+                        "comment by ", NameMap.map name, " on ",
                         Date.fmt "%Y-%M-%d %H:%M%S +000 UTC" date
                       ]
                 in
@@ -148,26 +148,45 @@ structure MakeMarkdown : sig
                 end
           in
             prl [E.summary entry, "\n\n"];
-            prResponse ("Version", E.smlnjVersion entry);
-            prCheckList
-              OperatingSystem.toString
-                ("Operating System", isOS, OperatingSystem.values);
-            nl();
-            prResponse ("OS Version", osVersion);
-            prChoice Architecture.toString ("Processor", E.arch entry);
-            prChoice Component.toString ("Component", E.component entry);
-            prChoice Severity.toString ("Severity", E.severity entry);
-            prTextBlock ("Description of the problem", E.description entry);
-            prCodeBlock ("Transcript", "", E.transcript entry);
-            prTextBlock ("Expected Behavior", []);
-            prTextBlock ("Steps to Reproduce", E.source entry);
-            prTextBlock ("Additional Information", []);
-            prResponse ("Email address", #email(E.submitter entry));
-            if not (null (E.comments entry))
+            if (E.isBug entry)
               then (
-                pr "## Comments\n";
-                List.app prComment (E.comments entry))
-              else ();
+                prResponse ("Version", E.smlnjVersion entry);
+                prCheckList
+                  OperatingSystem.toString
+                    ("Operating System", isOS, OperatingSystem.values);
+                nl();
+                prResponse ("OS Version", osVersion);
+                prChoice Architecture.toString ("Processor", E.arch entry);
+                prChoice Component.toString ("Component", E.component entry);
+                prChoice Severity.toString ("Severity", E.severity entry);
+                prTextBlock ("Description of the problem", E.description entry);
+                prCodeBlock ("Transcript", "", E.transcript entry);
+                prTextBlock ("Expected Behavior", []);
+                prTextBlock ("Steps to Reproduce", E.source entry);
+                prTextBlock ("Additional Information", []);
+                prResponse ("Email address", #email(E.submitter entry)))
+              else (
+                prTextBlock ("Description of the problem", E.description entry));
+            (* include a standard comment that records the connection to the old gforge bug *)
+            pr "## Comments from smlnj-gforge\n";
+            prComment {
+                date = E.openDate entry,
+                name = "gforge-bug-porter script",
+                content = let
+                  val content = (case E.keywords entry
+                         of "" => []
+                          | kws => ["**Keywords:** " ^ E.keywords entry]
+                        (* end case *))
+                  val content = (case E.submitMsg entry
+                         of NONE => content
+                          | SOME msg => msg::content
+                        (* end case *))
+                  in
+                    concat["** smlnj-gforge bug number ", Int.toString(E.id entry), "**"]
+                      :: content
+                  end
+              };
+            List.app prComment (E.comments entry);
             TextIO.closeOut outS
           end
 
