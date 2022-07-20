@@ -44,7 +44,7 @@ structure NameMap : sig
             ("Masaya Saito", "mmsaito"),
             ("matt rice", "ratmice"),
             ("Matthew Fluet", "MatthewFluet"),
-            ("Matthias Blume", "mathias-blume"),
+            ("Matthias Blume", "matthias-blume"),
             ("Mike Rainey", "mikerainey"),
             ("Phil Clayton", "pclayton"),
             ("Simon Hollingshead", "simonhollingshead"),

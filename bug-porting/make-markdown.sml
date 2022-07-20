@@ -137,15 +137,13 @@ structure MakeMarkdown : sig
           val {os, version=osVersion} = E.os entry
           fun isOS os' = (os = os')
           (* print a comment *)
-          fun prComment {date, name, content} = let
-                val hdr = concat [
-                        "comment by ", NameMap.map name, " on ",
-                        Date.fmt "%Y-%M-%d %H:%M%S +000 UTC" date
-                      ]
-                in
-                  nl();
-                  prTextBlock (hdr, content)
-                end
+          fun prComment {date, name, content} = (
+                nl();
+                prl [
+                    "#### comment by ", NameMap.map name, " on ",
+                    Date.fmt "%Y-%M-%d %H:%M%S +000 UTC" date, "\n\n"
+                  ];
+                List.app (fn ln => prl [ln, "\n"]) content)
           in
             prl [E.summary entry, "\n\n"];
             if (E.isBug entry)
@@ -168,24 +166,21 @@ structure MakeMarkdown : sig
               else (
                 prTextBlock ("Description of the problem", E.description entry));
             (* include a standard comment that records the connection to the old gforge bug *)
-            pr "## Comments from smlnj-gforge\n";
-            prComment {
-                date = E.openDate entry,
-                name = "gforge-bug-porter script",
-                content = let
-                  val content = (case E.keywords entry
-                         of "" => []
-                          | kws => ["**Keywords:** " ^ E.keywords entry]
-                        (* end case *))
-                  val content = (case E.submitMsg entry
-                         of NONE => content
-                          | SOME msg => msg::content
-                        (* end case *))
-                  in
-                    concat["** smlnj-gforge bug number ", Int.toString(E.id entry), "**"]
-                      :: content
-                  end
-              };
+            pr "### Comments from smlnj-gforge\n\n";
+            prl ["#### Original smlnj-gforge bug number ", Int.toString(E.id entry), "\n"];
+            let
+            val content = (case E.keywords entry
+                   of "" => []
+                    | kws => ["**Keywords:** " ^ E.keywords entry]
+                  (* end case *))
+            val date = Date.fmt " on %Y-%M-%d at %H:%M%S" (E.openDate entry)
+            val content = (case E.submitMsg entry
+                   of NONE => "Submitted " ^ date :: content
+                    | SOME msg => msg ^ date :: content
+                  (* end case *))
+            in
+              List.app (fn ln => prl ["\n", ln, "\n"]) content
+            end;
             List.app prComment (E.comments entry);
             TextIO.closeOut outS
           end

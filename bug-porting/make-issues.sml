@@ -98,9 +98,8 @@ structure MakeIssues : sig
                       val path = OS.Path.concat(outDir, issueName)
                       in
                         MakeMarkdown.gen (path, ent);
-(* TODO: include open/close and other labels in output *)
                         if prCmd
-                          then prErr (uploadCmd (ent, path))
+                          then TextIO.output (TextIO.stdOut, uploadCmd (ent, path))
                           else prErr (concat[
                               issueName, ": ", E.summary ent,
                               if E.isOpen ent then " [open]\n" else " [closed]"

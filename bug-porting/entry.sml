@@ -348,7 +348,11 @@ structure Comment =
                               content = Util.lines (SS.string rest)
                             }
                       in
-                        List.rev (comment::comments)
+                        (* note that comments are in "most recent first" order in the database,
+                         * so we build the list in reverse order to get them into "oldest first"
+                         * order.
+                         *)
+                        comment::comments
                       end
                 (* end case *))
           val SOME(_, date, name, rest) = getHeader (Substring.full s)
