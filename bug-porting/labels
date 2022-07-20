@@ -54,16 +54,17 @@ sml-repl        problem with SML/NJ REPL
 
 cygwin          problem specific to Cygwin on Windows
 linux           problem specific to Linux systems
+bsd             problem specific to BSD systems (NetBSD, etc)
 macos           problem specific to macOS systems
 windows         problem specific to Windows systems
-wsl             problem specific to Cygwin on Windows
+wsl             problem specific to WSL on Windows
 
 # Labels for other things
 
 cm              problem with compilation manager
 error-messages  problem with compiler error messages
 floating-point  problem related to floating-point operations
-gc              problem with the garbage collection
+gc              problem with the garbage collector
 gforge          bug (or feature request) ported from smlnj-gforge repository
 installation    problem with installation
 io              problem with input/output
@@ -84,3 +85,8 @@ compiler-cps            problem with CPS phases
 compiler-codegen        problem with code generator
 compiler-llvm           problem with LLVM code generator
 compiler-mlrisc         problem with MLRISC code generator
+
+# Labels to track when bugs are fixed
+
+fixed-in-VERSION        bug was fixed for the specified release
+
