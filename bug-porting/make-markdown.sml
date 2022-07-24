@@ -141,7 +141,7 @@ structure MakeMarkdown : sig
                 nl();
                 prl [
                     "#### comment by ", NameMap.map name, " on ",
-                    Date.fmt "%Y-%M-%d %H:%M%S +000 UTC" date, "\n\n"
+                    Date.fmt "%Y-%m-%d %H:%M:%S +000 UTC" date, "\n\n"
                   ];
                 List.app (fn ln => prl [ln, "\n"]) content)
           in
@@ -173,7 +173,7 @@ structure MakeMarkdown : sig
                    of "" => []
                     | kws => ["**Keywords:** " ^ E.keywords entry]
                   (* end case *))
-            val date = Date.fmt " on %Y-%M-%d at %H:%M%S" (E.openDate entry)
+            val date = Date.fmt " on %Y-%m-%d at %H:%M:%S" (E.openDate entry)
             val content = (case E.submitMsg entry
                    of NONE => "Submitted " ^ date :: content
                     | SOME msg => msg ^ date :: content
