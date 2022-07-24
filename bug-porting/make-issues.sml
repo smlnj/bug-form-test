@@ -102,7 +102,7 @@ structure MakeIssues : sig
                           then TextIO.output (TextIO.stdOut, uploadCmd (ent, path))
                           else prErr (concat[
                               issueName, ": ", E.summary ent,
-                              if E.isOpen ent then " [open]\n" else " [closed]"
+                              if E.isOpen ent then " [open]\n" else " [closed]\n"
                             ])
                       end
                   | NONE => prErr (concat["** bug ", Int.toString id, " does not exist\n"])
